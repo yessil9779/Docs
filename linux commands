@@ -1,0 +1,40 @@
+ls -l -- показать дирикторию
+less /etc/servisec -- Просмотр портов
+ssh ip -- подключаться по ssh к другому серверу (exit)
+host yandex.ru или host ip -- ищет ip из dns сервера 
+uname -a -- имя компьютера
+lscpu -- характеристики компьютера
+сlear -- чистить терминал
+echo "Hello World" -- выводить текст в терминал
+man uptime -- мануал про команду uptime
+info uptime -- документация про команду uptime
+whereis uptime -- где находится программа uptime
+locate readme.txt -- где находится файл с таким названием
+man -k time -- все команды связанные с time
+ps -- посмотреть какие команды выполняются
+pwd -- в какой директории нахожусь
+cat readme.txt -- читать файл и выводить в терминал
+more readme.txt -- читать файл и выводить в терминал частично
+less readme.txt -- читать файл и выводить в терминал частично
+touch readme.txt -- создать файл
+cp readme.txt ~/Desktop/ -- копировать файл
+mv readme.txt ~/Desktop/ -- переместить файл
+rm * -- стереть все файлы
+cp file?.txt -v Dir2 -- копировать все file1.txt, file2.txt, file3.txt
+mkdir dir1 -- создать директорию 
+rmdir dir1 -- удалить директорию
+find /home -name "*.txt" -- искать все файлы по имени в директории home
+wc readme.txt -- wordcount(количество строк,количество слов,количество символов)
+sort readme.txt -- сортирует и выводит на экран
+grep текст ./* -- искать текст в файлах
+sort names.txt > names_sorted.txt -- сортирует и сохраняет на новый файл
+sort names.txt >> names_sorted.txt -- сортирует и добавляет на существующий файл
+top -- как Task manager в windows
+nano Newfile1 -- редактор
+wget -- скачать файл из интернета
+apt-get install -- скачать и установить программу
+apt-get remove -- удалить программу
+dpkg -i -- установить программу из файла .deb
+dpkg -r -- удалить программу
+ifconfig -- показать мой Ip адресс
+ping -- протестировать коннекш к адресу

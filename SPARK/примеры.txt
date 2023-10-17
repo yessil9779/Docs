@@ -1,0 +1,31 @@
+Creating RDDs from Collections
+
+>>> data = [1, 2, 3, 4, 5]              -- python list
+>>> rdd = sc.parallelize(data, 4)       -- method creates a parallelized collection from a Python list, 4 number of partition
+>>> rdd.glom().collect()                -- method returns a list of all of the elements within each partition
+
+-----------------------------------
+Creating RDDs from External Sources
+
+>>> distFile = sc.textFile('data.txt', 3) -- method creates an RDD with three partitions from the input file
+>>> distFile.glom().collect()
+
+-----------------------------------
+Transformations
+
+>>> data = [1, 2, 3, 4, 5, 6]
+>>> rdd = sc.parallelize(data)
+>>> map_result = rdd.map(lambda x: x * 2)              -- map(func) function returns multiplies each element of the source RDD by two
+>>> filter_result = rdd.filter(lambda x: x % 2 == 0)   -- filter(func) function returns only the even numbers from the source RDD
+>>> distinct_result = rdd.distinct()                   -- The distinct() method returns the unique elements in a list
+>>> map_result.collect()
+
+-----------------------------------
+Actions
+
+>>> data = [1, 2, 3]
+>>> rdd = sc.parallelize(data)
+>>> rdd.reduce(lambda a, b: a * b)   -- reduce() method aggregates elements // 6
+>>> rdd.take(2)                      -- returns the first two elements of an RDD // [1, 2]
+>>> rdd.collect()                    -- collect() method returns all of the elements of the RDD as an array // [1, 2, 3, 4, 5]
+>>> rdd.takeOrdered(2, lambda s: -s) -- returns the first two elements of the RDD in descending order // [2, 1]

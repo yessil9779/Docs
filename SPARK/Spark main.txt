@@ -1,0 +1,10 @@
+cd %SPARK_HOME%/bin
+spark-shell
+./pyspark
+py -3.9 -m venv .env_test
+.env_test\scripts\activate
+-------------------------
+Пользовательский интерфейс приложения Spark:  http://localhost:4040/
+Диспетчер ресурсов:                           http://localhost:9870
+Spark JobTracker:                             http://localhost:8088/
+Информация об узле:                           http://localhost:8042/

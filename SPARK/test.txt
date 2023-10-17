@@ -1,0 +1,16 @@
+from pyspark import SparkContext, SparkConf, SQLContext
+
+
+conf = SparkConf().setAppName("ACTION_TABLE").set("spark.hadoop.yarn.timeline-service.enabled", "false")
+sc = SparkContext(conf=conf)
+sq = SQLContext(sc)
+
+
+sq.read.format("orc").load(r"/apps/hive/warehouse/mckinsey.db/agg_card_operation").createOrReplaceTempView("AGG_CARD_OPERATION")
+sql_file = open("query_1.sql", encoding="utf-8")
+query = sql_file.read()
+df = sq.sql(sqlQuery=query)
+
+df.show()
+df.repartition(10).write.format("orc").mode("append").save(r"/apps/hive/warehouse/sandbox.db/agg_operation_kind_orc")
+

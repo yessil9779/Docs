@@ -1,0 +1,15 @@
+import (
+"fmt"
+"github.com/mactsouk/go/simpleGitHub"
+)
+func main() {
+fmt.Println(simpleGitHub.AddTwo(5, 6))
+}
+----------------------------------------
+Если вы попытаетесь сразу выполнить getPackage.go, то будете разочарованы:
+Как видно, необходимо установить недостающий пакет на ваш компьютер. 
+Чтобы скачать этот пакет, нужно выполнить следующую команду:
+$ go get -v github.com/mactsouk/go/simpleGitHub
+Загруженные файлы вы найдете в следующем каталоге:
+$ ls -l ~/go/src/github.com/mactsouk/go/simpleGitHub/
+----------------------------------------

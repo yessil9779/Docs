@@ -1,0 +1,7 @@
+go version
+Go: Install/Update tools
+go clean -modcache    // очистка кэша
+fmt.Scanln()         // ждем ввода пользователя
+go run main.go      // запуск программы
+go build main.go   // сборка на бинарный файл
+./main            // запуск бинарный файл

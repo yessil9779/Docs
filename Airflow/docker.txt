@@ -1,0 +1,3 @@
+docker-compose down -v             -- остановка докера
+docker-compose up airflow-init     -- поднять докер
+docker-compose up -d 

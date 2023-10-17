@@ -1,0 +1,10 @@
+pip --version
+pip install camelcase
+pip list
+pip search templates
+pip check
+python -m pip install --upgrade pip
+pip freeze - показывает зависымости
+pip freeze > requirements.txt -сохраняет зависымости в файл
+pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org requests
+Collecting requests

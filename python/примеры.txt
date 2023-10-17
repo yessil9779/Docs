@@ -1,0 +1,2 @@
+lambda a, b: a + b        -- Lambda functions are anonymous functions (i.e., they do not have a name) that are created at runtime.
+pip install 'apache-airflow==2.3.3'  --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.3.3/constraints-3.7.txt" -U --no-cache-dir --use-deprecated=legacy-resolver   

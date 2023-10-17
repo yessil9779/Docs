@@ -1,0 +1,56 @@
+#Python JSON to dict
+import json
+
+# some JSON:
+x =  '{ "name":"John", "age":30, "city":"New York"}'
+
+# parse x:
+y = json.loads(x)
+
+# the result is a Python dictionary:
+print(y["age"])
+
+-----------------------------------------------------
+#Convert dict to JSON
+import json
+
+# a Python object (dict):
+x = {
+  "name": "John",
+  "age": 30,
+  "city": "New York"
+}
+
+# convert into JSON:
+y = json.dumps(x)
+
+# the result is a JSON string:
+print(y)
+
+-----------------------------------------------------
+#Python read JSON file
+import json
+
+with open('fcc.json', 'r') as fcc_file:
+    fcc_data = json.load(fcc_file)
+    print(fcc_data)
+-----------------------------------------------------
+# Writing JSON to a file
+import json
+
+person_dict = {"name": "Bob",
+"languages": ["English", "French"],
+"married": True,
+"age": 32
+}
+
+with open('person.txt', 'w') as json_file:
+  json.dump(person_dict, json_file)
+-----------------------------------------------------
+
+If you need to parse a JSON string that returns a dictionary, then you can use the json.loads() method.
+If you need to parse a JSON file that returns a dictionary, then you can use the json.load() method.
+-----------------------------------------------------
+print(json.dumps(fcc_data, indent=4, sort_keys=True))
+We can also sort the keys in alphabetical order using the sort_keys parameter and setting that to True.
+In this example, we are going to have an indent of 4 spaces and print the data in an easier to read format.

@@ -1,0 +1,15 @@
+select * from gv$session
+where username is not null
+order by logon_time, sid 
+---
+select * from gv$session
+where osuser = sys_context('USERENV', 'OS_USER')
+order by logon_time, sid 
+--
+select * from gv$session
+where username is not null and status = 'ACTIVE'
+order by logon_time, sid 
+--
+select * from gv$session
+where osuser = sys_context('USERENV', 'OS_USER') and status = 'ACTIVE'
+order by logon_time, sid 

@@ -1,0 +1,41 @@
+CREATE OR REPLACE PROCEDURE fast_way_by_Yessil
+IS
+TYPE new_table_entry IS TABLE OF entry%ROWTYPE INDEX BY BINARY_INTEGER;
+new_table new_table_entry;
+cnt NUMBER := 0;
+su NUMBER := 0;
+
+
+BEGIN
+
+--select count(*) from entry@oldprod1  where local_date >= to_date('2020.08.01','yyyy.mm.dd')
+DBMS_OUTPUT.PUT_LINE('Bulk collect started at: ' || TO_CHAR(SYSDATE, 'DD-MON-YYYY HH24:MI:SS'));
+
+  SELECT *
+  BULK COLLECT INTO new_table
+  FROM entry@oldprod1  
+  where local_date between to_date('2018.01.30','yyyy.mm.dd') and to_date('2018.01.31','yyyy.mm.dd');
+  
+DBMS_OUTPUT.PUT_LINE('Bulk collect ended at: ' || TO_CHAR(SYSDATE, 'DD-MON-YYYY HH24:MI:SS'));
+
+
+  FOR i IN 1 .. new_table.COUNT 
+     LOOP
+         cnt := cnt + 1;
+         
+            IF(cnt = 10000)
+              THEN
+                COMMIT;
+                cnt := 0;
+                su := su + 1;
+            END IF;    
+            
+         INSERT INTO entry VALUES new_table(i);
+     END LOOP;    
+     
+su := su * 10000;     
+
+DBMS_OUTPUT.PUT_LINE('loop ended at: ' || TO_CHAR(SYSDATE, 'DD-MON-YYYY HH24:MI:SS'));
+DBMS_OUTPUT.PUT_LINE('INSERTED = ' || su);
+
+END;

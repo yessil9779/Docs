@@ -1,0 +1,6 @@
+BEGIN
+  FOR c IN ( SELECT table_name FROM all_tables where owner = 'ACRM_DW' and table_name like 'UAC_%')
+  LOOP
+    EXECUTE IMMEDIATE 'DROP TABLE ACRM_DW.' || c.table_name;
+  END LOOP;
+END;

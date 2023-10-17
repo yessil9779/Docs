@@ -1,0 +1,8 @@
+select * from dba_tab_privs 
+where owner = 'S02'
+and table_name = UPPER('Z#KAS_PRD_DEBT')
+------------------------------------------------------------------------------------------
+begin
+  execute immediate ('grant '||p_privilege||' on '||p_table_name||' to '||p_user_name);
+end; 
+------------------------------------------------------------------------------------------

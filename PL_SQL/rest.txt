@@ -1,0 +1,30 @@
+create or replace procedure CUST_PUSH_APII
+(i_mobile evnt_msg.address_data%type,
+ i_iin ows.client.client_number%type,
+ i_message in varchar2,
+ status out varchar2)
+IS
+    sReq   varchar2(4000);
+    sWSADR varchar2(4000) := 'http://10.32.225.62:14500/clientpush/rest/push/';
+    resp_clob clob;
+  --  v_timer1 number;
+
+begin
+
+       sReq :=  sWSADR||'api?mobile='||i_mobile||'&'||'iin='||i_iin||'&'||'message='||i_message;
+     --  v_timer1 := dbms_utility.get_time();
+       
+    --   WHILE (ABS(v_timer1 - dbms_utility.get_time())/100) < 1
+          --  LOOP
+                  OPT_PKG_SOAP_UTILS.opt_makeSoapRequest(p_url      => sReq,
+                                                         p_req_body  => '',
+                                                         p_method => 'GET',
+                                                         p_resp_body => resp_clob);
+
+                  status :=SUBSTR(resp_clob,1,3);
+          --  END LOOP;
+            
+    --   status := nvl(status,'021');           
+       dbms_output.put_line(resp_clob);
+
+end;

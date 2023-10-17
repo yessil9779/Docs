@@ -1,0 +1,1 @@
+regexp_replace(LISTAGG(c_date, ';') WITHIN GROUP (ORDER BY 1),'([^;]+)(;\1)+', '\1')

@@ -1,0 +1,65 @@
+DECLARE
+ TYPE tag_name_type IS TABLE OF VARCHAR2(150)
+ INDEX BY BINARY_INTEGER;
+ tag_name tag_name_type;
+ 
+ TYPE tag_value_type IS TABLE OF VARCHAR2(150)
+ INDEX BY BINARY_INTEGER;
+ tag_value tag_value_type;
+ 
+ cnt BINARY_INTEGER;
+ 
+BEGIN
+tag_name(1)  := 'CPNA';
+tag_name(2)  := 'CPAD';
+tag_name(3)  := 'CPCY';
+tag_name(4)  := 'CPST';
+tag_name(5)  := 'CPCN';
+tag_name(6)  := 'CPPC';
+tag_name(7)  := 'RPNA';
+tag_name(8)  := 'PTID';
+------------------------
+tag_value(1)  := 'POST.KZ';
+tag_value(2)  := 'POST.KZ';
+tag_value(3)  := 'Almaty';
+tag_value(4)  := '_';
+tag_value(5)  := 'KAZ';
+tag_value(6)  := '050000';
+tag_value(7)  := 'Unknown Name';
+tag_value(8)  := 'C57';
+
+cnt := tag_name.FIRST;
+
+LOOP
+
+update (
+select d.target_fee_code,d.posting_status, d.outward_status, d.add_info
+from doc d
+where d.ret_ref_number = '011185167485' 
+and d.amnd_state = 'A'   
+   /*d.target_channel not in ( 'e', 'v')
+   and d.amnd_state = 'A'
+   and d.is_authorization = 'N'
+   and d.posting_status = 'D'
+   and d.outward_status = 'C' 
+   and d.source_number = '91960001' 
+   and d.trans_type = 700 
+   and d.request_category = 'P' 
+   and d.trans_details = 'POST.KZ'
+   and sy_convert.GET_TAG_VALUE(d.add_info, 'PTID') = 'C01' */   
+  )set target_fee_code = 'MS',
+       posting_status = 'W',
+       outward_status = 'W',
+       add_info = sy_convert.set_tag_value (add_info,tag_name(cnt),tag_value(cnt)); 
+
+DBMS_OUTPUT.put_line(tag_name(cnt)||' ---> '||tag_value(cnt));       
+
+commit;
+
+ -- условие выхода - равенство счетчика индексу последнего элемента
+ EXIT WHEN cnt = tag_name.LAST;
+ -- счетчик устанавливаем на индекс следующего элемента
+ cnt := tag_name.NEXT(cnt);
+END LOOP;
+   
+END;

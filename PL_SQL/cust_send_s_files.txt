@@ -1,0 +1,104 @@
+create or replace procedure CUST_SEND_S_FILES_TO_COLVIR
+(i_date IN VARCHAR2)
+is
+--parametrs
+    p_RetCode              varchar2(30);     --out varchar2,
+    p_RetMsg               varchar2(500); --out varchar2,
+    p_UniqueRefNumber            varchar2(30);
+    p_amount                     varchar2(10);
+    p_valCode                    varchar2(3);
+    p_dval                       varchar2(30);
+    p_code_acl  varchar2(30);
+    p_code_acr  varchar2(30);
+    p_TXT_DSCR         varchar2(150);
+    p_altercode varchar2(6);
+    p_code_bcr varchar(15);
+    p_rnn_cr varchar(15);
+    p_txt_ben varchar(60);
+    p_knp  varchar2(6);
+    p_code_be  varchar2(6);
+ ---variavle
+    req_soap  clob;
+    resp_clob clob;
+    namespaces varchar2(4000) := 'xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns2="http://webservices.kazpost.kz/owcolvir/schema"';
+    l_ns_resp  varchar2(200) := '/SOAP-ENV:Envelope/SOAP-ENV:Body/ns2:CreateResponse/ns2:ResponseInfo';
+    l_resp  DBMS_XMLDOM.DOMNode;
+   -- l_resp2 DBMS_XMLDOM.DOMNode;
+    indomdoc DBMS_XMLDOM.DOMDocument;
+    myparser DBMS_XMLPARSER.parser;
+
+  begin
+  for rec  in (select s.p_refer as p_UniqueRefNumber, s.local_amount as p_amount, s.curr_name as p_valCode, s.bank_date as p_dval, s.cr_account_number as p_code_acr,
+  s.dr_account_number as p_code_acl, s.bcr as p_code_bcr, s.rrn as p_rnn_cr, s.ben as p_txt_ben, s.knp as p_knp, s.od as p_code_be, s.details as p_TXT_DSCR, s.way4 as p_altercode from ows.opt_synthetic s
+where s.p_refer like 'SD%'
+and s.bank_date >= to_date(i_date, 'yyyymmdd')
+and s.bank_date < to_date(i_date, 'yyyymmdd')+1
+and s.status = '0'
+) loop
+
+begin
+
+      req_soap:='
+                <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:sch="http://webservices.kazpost.kz/owcolvir/schema">
+                 <soapenv:Header/>
+                 <soapenv:Body>
+                                  <sch:CreateRequest>
+                                  <sch:p_refer>'||rec.p_UniqueRefNumber||'</sch:p_refer>
+                                  <sch:p_sdok>'||rec.p_amount||'</sch:p_sdok>
+                                  <sch:p_valcode>'||rec.p_valCode||'</sch:p_valcode>
+                                  <sch:p_dval>'||rec.p_dval||'</sch:p_dval>
+                                  <sch:p_code_acl>'||rec.p_code_acl||'</sch:p_code_acl>
+                                  <sch:p_code_acr>'||rec.p_code_acr||'</sch:p_code_acr>
+                                  <sch:p_TXT_DSCR>'||rec.p_TXT_DSCR||'</sch:p_TXT_DSCR>
+                                  <sch:p_altercode>'||rec.p_altercode||'</sch:p_altercode>
+                                  <sch:p_code_bcr>'||rec.p_code_bcr||'</sch:p_code_bcr>
+                                  <sch:p_rnn_cr>'||rec.p_rnn_cr||'</sch:p_rnn_cr>
+                                  <sch:p_txt_ben>'||rec.p_txt_ben||'</sch:p_txt_ben>
+                                  <sch:p_knp>'||rec.p_knp||'</sch:p_knp>
+                                  <sch:p_code_be>'||rec.p_code_be||'</sch:p_code_be>
+                 </sch:CreateRequest>
+                 </soapenv:Body>
+               </soapenv:Envelope>';
+
+      Begin
+      OPT_PKG_SOAP_UTILS.opt_makeSoapRequest(p_url      => 'http://172.30.75.71:62669/owcolvir/owcolvir.wsdl',
+                                        p_req_body  => req_soap,
+                                        p_resp_body => resp_clob);
+
+      exception when others then
+        p_RetCode:=sqlcode;
+        p_RetMsg:=substr(sqlerrm,1,200);
+        return;
+      end;
+      myParser := DBMS_XMLPARSER.newParser;
+      dbms_xmlparser.parseClob(myParser, resp_clob);
+      indomdoc := dbms_xmlparser.getDocument(myParser);
+      l_resp   := dbms_xslprocessor.selectsinglenode(dbms_xmldom.makeNode(indomdoc),l_ns_resp,namespaces);
+      p_RetCode     := dbms_xslprocessor.valueOf(l_resp,'ns2:ResponseCode', namespaces);
+      p_RetMsg      := dbms_xslprocessor.valueOf(l_resp,'ns2:ResponseText', namespaces);
+    --  dbms_output.put_line(p_RetCode);
+    --  dbms_output.put_line(p_RetMsg);
+
+      if p_RetCode = '0'
+      then update ows.opt_synthetic s
+      set s.status = '1'
+      where s.p_refer = rec.p_UniqueRefNumber;
+      commit;
+      else
+      update ows.opt_synthetic s
+      set s.errmsg = substr(p_RetMsg,1,200)
+      where s.p_refer = rec.p_UniqueRefNumber;
+      commit;
+    end if;
+
+      if p_RetCode is null then
+         p_RetCode := -1; --ошибка
+         p_RetMsg := substr(resp_clob,1,200);
+         return;
+      end if;
+      dbms_xmlparser.freeParser(myParser);
+    --  dbms_output.put_line(p_RetCode);
+    --  dbms_output.put_line(p_RetMsg);
+      end;
+      end loop;
+end;

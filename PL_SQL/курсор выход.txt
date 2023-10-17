@@ -1,0 +1,40 @@
+create or replace procedure Cust_ANSWER2(
+itn_in in varchar2,
+ProductType in varchar2,
+cv_results1 in out sys_refcursor
+)
+
+is
+   begin
+
+          open cv_results1 for
+
+          select distinct ac1.contract_number,
+                          '000140002217' as bin,
+                          'JSC KAZPOST' as name,
+                          c.itn,
+                          c.last_nam,
+                          c.first_nam,
+                          c.father_s_nam,
+                          '2' as AccountAccessType,
+                          ac1.date_open,
+                          ac1.date_expire,
+                          case when ap.name like '%Old Man%' then '0'
+                               when ap.name like '%Social%' then '1' end ReportType,
+                          case when ac1.contr_status = '51' then '0'
+                               when ac1.contr_status = '86' then '1'
+                               when (ac1.add_info_02 = 'Y' or ac1.contr_status = '267') then '2'
+                               else '3'  end contrStatus
+                          from acnt_contract ac1, client c , f_i f, appl_product ap
+                               where ac1.amnd_state = 'A'
+                                and ac1.product = ap.internal_code
+                               and ac1.f_i = f.id
+                               --and ac1.is_ready = 'Y'
+                               and c.id = ac1.client__id
+                               and c.amnd_state = 'A'
+                               and f.amnd_state = 'A'
+                               and ap.amnd_state = 'A'
+                               /*and ap.report_type in ('OLD_MAN','SOCIAL')*/
+                               and ((ProductType = '1' and ap.name like '%Old Man%') OR (ProductType = '2' and ap.name like '%Social%'))
+                               and c.itn = itn_in;
+    end;

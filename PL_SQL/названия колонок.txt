@@ -1,0 +1,12 @@
+SELECT
+    DATA_TYPE
+FROM
+    all_tab_columns 
+WHERE
+    table_name = UPPER('TABLE NAME') -- in uppercase
+AND column_name = UPPER('COLUMN NAME') -- in uppercase
+--------------------------------------
+select * from user_col_comments where table_name=UPPER('prd_contracts')
+select * from ALL_TAB_COMMENTS where comments like '%вид%'
+select * from user_tab_comments
+

@@ -1,0 +1,80 @@
+create or replace trigger CUST_PUSH_API_EVNT_MSG
+    FOR INSERT ON EVNT_MSG
+  
+COMPOUND TRIGGER
+    TYPE r_msg_type IS RECORD (
+        USAGE_ACTION__OID   ows.evnt_msg.usage_action__oid%TYPE,
+        STATUS   ows.evnt_msg.status%TYPE,
+        SENDING_DATE   ows.evnt_msg.sending_date%TYPE,
+        SENDING_DETAILS   ows.evnt_msg.sending_details%TYPE,
+        DELIVERY_CHANNEL   ows.evnt_msg.delivery_channel%TYPE,
+        CODE   ows.evnt_msg.code%TYPE
+    );
+
+    TYPE t_msg_type IS TABLE OF r_msg_type
+        INDEX BY PLS_INTEGER;
+
+    t_msg   t_msg_type;
+
+    AFTER EACH ROW IS
+    BEGIN
+        t_msg (t_msg.COUNT+1).USAGE_ACTION__OID :=:NEW.USAGE_ACTION__OID;
+        t_msg (t_msg.COUNT).STATUS := :NEW.STATUS;
+        t_msg (t_msg.COUNT).SENDING_DATE := :NEW.SENDING_DATE;
+        t_msg (t_msg.COUNT).SENDING_DETAILS := :NEW.SENDING_DETAILS;
+        t_msg (t_msg.COUNT).DELIVERY_CHANNEL := :NEW.DELIVERY_CHANNEL;
+        t_msg (t_msg.COUNT).CODE := :NEW.CODE;
+    END AFTER EACH ROW;
+
+    AFTER STATEMENT IS
+        i_iin ows.client.client_number%type;
+        i_mobile evnt_msg.address_data%type;
+        i_message varchar2(3005);
+        code varchar2(3);
+    BEGIN
+    
+     
+
+        FOR ind IN 1 .. t_msg.COUNT
+        LOOP
+         
+        IF t_msg(ind).STATUS = 'W' and t_msg(ind).DELIVERY_CHANNEL = 'P' and t_msg(ind).CODE = 'PUSH' THEN  
+        
+         select cl.client_number,
+                    em.address_data,
+                    substr(replace(em.message_string_1 ||em.message_string_2||em.message_string_3||em.message_string_4||em.message_string_5||em.message_string_6,' ', '%20'),1,3000)
+                into i_iin,i_mobile,i_message
+             from ows.evnt_msg em ,ows.usage_action us,ows.acnt_contract c,ows.client cl
+             where em.usage_action__oid = us.id
+             and us.acnt_contract__id = c.id
+             and cl.id = c.client__id 
+             and em.usage_action__oid = t_msg(ind).USAGE_ACTION__OID
+            -- and (em.message_string_1||em.message_string_2||em.message_string_3||em.message_string_4||em.message_string_5||em.message_string_6) is not null
+             and rownum = 1;    
+
+             CUST_PUSH_APII(i_mobile,i_iin,i_message,code);
+          -- code:='000';
+
+              if(code = '200')
+                then
+                  update evnt_msg
+                  set status = 'C',
+                      sending_date = sysdate,
+                      sending_details = 'Успешная отправка сообщения'
+                  where usage_action__oid = t_msg(ind).USAGE_ACTION__OID;
+             else
+                  update evnt_msg
+                  set status = 'J',
+                  sending_date = sysdate,
+                  sending_details = decode(code,'021','Задержка на сервере','500','Ошибка на сервере','404','Пользователь не найден','300','Больше одного пользователя с таким ИИН и номером телефона','Cервер пуш не работает')
+                  where usage_action__oid = t_msg(ind).USAGE_ACTION__OID;
+
+               end if;
+         END IF;   
+              
+        END LOOP;
+        
+    END AFTER STATEMENT;
+    
+
+END;

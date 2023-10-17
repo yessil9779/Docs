@@ -1,0 +1,6 @@
+select * from ALL_OBJECTS
+select * from ALL_SOURCE 
+select * from USER_SOURCE
+select * from ALL_VIEWS where view_name = 'XD_DOV_LICA_GCVP_VIEW'
+select * from all_source where name = upper('t_pkgdeaprm') and type = 'PACKAGE BODY' order by line
+select * from ALL_TAB_COLUMNS

@@ -1,0 +1,65 @@
+DECLARE
+  
+  CURSOR temporary_table IS
+  
+    select crd.contract_number card_number, 
+           ca_crd.prod_date card_prod_date,
+           crd.production_status acrd_prod_status, 
+           ca_crd.status card_status,
+           app.contract_number bus_number,
+           app.id bus_id,
+           app.production_status bus_number_prod_stat, 
+           ca_app.prod_date, 
+           ca_app.status,
+           ca_app.id 
+    from acnt_contract crd, client c, acnt_contract app,card_info ca_crd, card_info ca_app
+    where crd.amnd_state = 'A'
+    and app.amnd_state = 'A'
+    and c.amnd_state = 'A'
+    and app.relation_tag = 'T'
+    and c.id = crd.client__id
+    and c.id = app.client__id
+    and app.id = ca_app.acnt_contract__oid
+    and crd.id = ca_crd.acnt_contract__oid
+    and app.acnt_contract__oid = crd.id
+    and c.client_number in (                          
+                            '851030402322'
+                            );
+
+  t_table temporary_table%ROWTYPE;
+
+BEGIN
+
+  OPEN temporary_table;
+    
+  LOOP 
+
+    EXIT WHEN temporary_table%NOTFOUND;
+
+    FETCH temporary_table INTO t_table;  
+    
+    update card_info
+    set prod_date = t_table.card_prod_date ,
+        status = 'A'
+    where id = t_table.id;
+    commit;
+     
+    update acnt_contract ac
+    set ac.production_status = 'R'
+    where ac.id = t_table.bus_id; 
+   
+    
+    DBMS_OUTPUT.put_line('Updated data: '||t_table.card_prod_date||'    '||t_table.status);
+  
+  END LOOP;
+
+  CLOSE temporary_table; 
+  
+commit;
+
+END;
+
+
+
+
+

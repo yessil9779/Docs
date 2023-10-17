@@ -1,0 +1,3 @@
+sqlplus/nolog
+conn user/password@mydb
+show sga

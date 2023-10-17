@@ -1,0 +1,39 @@
+-- 1.     Сформируйте SQL запрос концентрации риска (кол-во Bad в поле RIsk) по полю Housing.
+select housing ,count(risk) 
+from text_import
+where risk = 'bad'
+group by housing
+----------------------------------------------------------------------
+-- 2.     Посчитайте среднюю по полю Credit amount в разрезе Sex
+select sex ,avg(credit_amount) 
+from text_import
+group by sex
+-----------------------------------------------------------------------
+/* 3. Разбейте Age на на одинаковые корзины (бакеты -(16-21),(21-26) И так далее) 
+      и посчитай количество Bad в каждой корзине и общее количество кредитов). 
+	  На результирующей таблице посчитай отношение ко-во Bad в корзине, на количество кредитов в корзине.*/
+	  
+select buckets k1,                    -- корзины
+       sum(bad_k) k2,                 -- ко-во Bad в корзине
+	   count(all_k) k3,               -- количество кредитов в корзине
+	   sum(bad_k)/count(all_k) k4     -- отношение ко-во Bad в корзине, на количество кредитов в корзине
+from (   
+select 
+       CASE 
+	        WHEN AGE between 16 and 21 THEN '16 - 21' 
+			WHEN AGE between 22 and 27 THEN '22 - 27' 
+			WHEN AGE between 28 and 33 THEN '28 - 33' 
+			WHEN AGE between 34 and 39 THEN '34 - 39'
+			WHEN AGE between 40 and 45 THEN '40 - 45' 
+			WHEN AGE between 46 and 51 THEN '46 - 51' 
+			WHEN AGE between 52 and 57 THEN '52 - 57' 
+			WHEN AGE between 58 and 63 THEN '58 - 63'
+            ELSE '>63'
+       END buckets,
+       decode(risk,'bad',1,0) bad_k,
+	   rown all_k
+from text_import
+)
+group by buckets
+order by buckets
+

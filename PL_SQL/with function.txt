@@ -1,0 +1,268 @@
+WITH
+---------------------------------------------------------------------------------- 	
+function acc_sum(facc_acc_num in varchar2,prev_date in date,beg_date in date,date_end in date)
+   return sys_refcursor
+is
+   rf_cur   sys_refcursor;
+begin
+   open rf_cur for
+  select facc_gk_num,
+		 facc_acc_number,
+		 id,
+		 case when substr(facc_gk_num,1,1) in (2,3,4) or substr(facc_gk_num,1,2) in ('65', '66', '67', '68', '69') or substr(facc_gk_num,1,4) = '9930' then 
+			sld_v - kt + dt		 
+		 else 
+		 	sld_v - dt + kt 
+		 end AS sld_in,
+		 case when substr(facc_gk_num,1,1) in (2,3,4) or substr(facc_gk_num,1,2) in ('65', '66', '67', '68', '69') or substr(facc_gk_num,1,4) = '9930' then 
+			sld_v_nat - kt_nat + dt_nat		 
+		 else 
+		 	sld_v_nat - dt_nat + kt_nat 
+		 end AS sld_in_nat,		 
+		 dt,
+		 kt,
+		 sld_v,
+		 dt_nat,
+		 kt_nat,
+		 sld_v_nat
+ from
+ ( SELECT fa.facc_gk_num,
+		 fa.facc_acc_number,
+		 fa.facc_ref_account AS id,
+		 SUM(CASE
+				 WHEN fa.facc_opdate > prev_date THEN
+			  		fa.facc_turn_dt#val
+				 ELSE
+				  0
+			 END) AS dt,
+		 SUM(CASE
+				 WHEN fa.facc_opdate > prev_date THEN
+			  		fa.facc_turn_dt#nat
+				 ELSE
+				  0
+			 END) AS dt_nat,			 
+		 SUM(CASE
+				 WHEN fa.facc_opdate > prev_date THEN
+			  		fa.facc_turn_kt#val
+				 ELSE
+				  0
+			 END) AS kt,
+		 SUM(CASE
+				 WHEN fa.facc_opdate > prev_date THEN
+			  		fa.facc_turn_kt#nat
+				 ELSE
+				  0
+			 END) AS kt_nat,			 
+		 SUM(fa.facc_sld_out#val) keep(dense_rank LAST ORDER BY fa.facc_opdate) sld_v,
+		 SUM(fa.facc_sld_out#nat) keep(dense_rank LAST ORDER BY fa.facc_opdate) sld_v_nat		 
+	FROM dwh_reg.fact_accounts fa
+   WHERE fa.facc$source = 'S02'
+		 AND fa.facc_opdate BETWEEN beg_date AND date_end
+		 AND fa.facc_ref_acc_summary IS NULL
+		 and fa.facc_acc_number = facc_acc_num
+   GROUP BY fa.facc_gk_num,
+			fa.facc_acc_number,
+			fa.facc_ref_account); 
+
+   return rf_cur;
+
+exception when others
+then null; 
+end;
+---------------------------------------------------------------------------------- 	
+function acc_detail(acc_summary in number,prev_date in date,beg_date in date,date_end in date)
+   return sys_refcursor
+is
+   rf_cur   sys_refcursor;
+begin
+   open rf_cur for
+     select facc_ref_acc_summary,
+		 case when substr(facc_gk_num,1,1) in (2,3,4) or substr(facc_gk_num,1,2) in ('65', '66', '67', '68', '69') or substr(facc_gk_num,1,4) = '9930' then 
+			sld_v - kt + dt		 
+		 else 
+		 	sld_v - dt + kt 
+		 end AS sld_in,
+		 case when substr(facc_gk_num,1,1) in (2,3,4) or substr(facc_gk_num,1,2) in ('65', '66', '67', '68', '69') or substr(facc_gk_num,1,4) = '9930' then 
+			sld_v_nat - kt_nat + dt_nat		 
+		 else 
+		 	sld_v_nat - dt_nat + kt_nat 
+		 end AS sld_in_nat,		 
+		 dt,
+		 kt,
+		 sld_v,
+		 dt_nat,
+		 kt_nat,
+		 sld_v_nat
+ from
+ (SELECT facc_ref_acc_summary,
+		 facc_gk_num_short as facc_gk_num,
+		 SUM(dt) AS dt,
+		 SUM(kt) AS kt,
+		 SUM(CASE
+				 WHEN rn_end = 1 THEN
+				  sld_out
+				 ELSE
+				  0
+			 END) AS sld_v,
+		 SUM(dt_nat) AS dt_nat,
+		 SUM(kt_nat) AS kt_nat,
+		 SUM(CASE
+				 WHEN rn_end = 1 THEN
+				  sld_out_nat
+				 ELSE
+				  0
+			 END) AS sld_v_nat			 
+	FROM (SELECT fa.facc_opdate,
+				 fa.facc_gk_num_short,
+				 fa.facc_ref_acc_summary,
+				 fa.facc_ref_account,
+				 CASE
+					 WHEN fa.facc_opdate > prev_date THEN
+							fa.facc_turn_dt#val
+					 ELSE
+					  0
+				 END AS dt,
+				 CASE
+					 WHEN fa.facc_opdate > prev_date THEN
+							fa.facc_turn_dt#nat
+					 ELSE
+					  0
+				 END AS dt_nat,				 
+				 CASE
+					 WHEN fa.facc_opdate > prev_date THEN
+							fa.facc_turn_kt#val
+					 ELSE
+					  0
+				 END AS kt,
+				 CASE
+					 WHEN fa.facc_opdate > prev_date THEN
+							fa.facc_turn_kt#nat
+					 ELSE
+					  0
+				 END AS kt_nat,				 
+			 	 fa.facc_sld_out#val AS sld_out,
+			 	 fa.facc_sld_out#nat AS sld_out_nat,				 
+				 row_number() over(PARTITION BY fa.facc_ref_account ORDER BY fa.facc_opdate) AS rn_beg,
+				 row_number() over(PARTITION BY fa.facc_ref_account ORDER BY fa.facc_opdate DESC) AS rn_end
+			FROM dwh_reg.fact_accounts fa
+		   WHERE fa.facc$source = 'S02'
+				 AND fa.facc_opdate BETWEEN beg_date AND date_end
+		         AND fa.facc_ref_acc_summary = acc_summary
+		  )
+   GROUP BY facc_ref_acc_summary, facc_gk_num_short); 
+   return rf_cur;
+
+exception when others
+then null; 
+end;
+-----------------------------------------------------------------------------------		
+acc_sum_p AS
+ (SELECT fa.facc_gk_num,
+		 fa.facc_acc_number,
+		 fa.facc_ref_account AS id,
+		 fa.facc_opdate as opdate		 		 
+	FROM dwh_reg.fact_accounts fa
+   WHERE fa.facc$source = 'S02'
+		 and fa.facc_opdate between '31.12.2020' and '04.01.2021'
+		 AND fa.facc_ref_acc_summary IS NULL
+),
+-----------------------------------------------------------------------------------
+acc_ibs AS
+ (SELECT case when fa.facc_opdate = dwh_reg.dict_od_jour$c.getclosedmonthdate(fa.facc_opdate) 
+			then dwh_reg.dict_od_jour$c.getprevopdate(fa.facc_opdate) 
+			else dwh_reg.dict_od_jour$c.getclosedmonthdate(fa.facc_opdate)
+		 end AS beg_date, 
+		 (   select	max(doj.doj_opdate) from DICT_OD_JOUR doj
+					where	doj.doj_opdate < fa.facc_opdate
+					and instr(dict_systune$c.getString(in_cBelongsTo => 'DICT_OD_JOUR', in_cCode => 'OPDATEYEAREND'), to_char(doj.doj_opdate, 'dd/mm/yyyy')) = 0
+		  ) as prev_date,
+         fa.facc_ref_account,
+         fa.facc_opdate opdate,
+		 d.c_code AS dep_code,
+		 fa.facc_acc_number,
+		 fa.facc_gk_num,
+		 fa.facc_cur_short,
+	 	 fa.facc_sld_in#val as sld_in,
+		 fa.facc_turn_dt#val as dt,		 
+		 fa.facc_turn_kt#val as kt,		 		 
+		 fa.facc_sld_out#val as sld_v,
+	 	 fa.facc_sld_in#nat as sld_in_nat,
+		 fa.facc_turn_dt#nat as dt_nat,		 
+		 fa.facc_turn_kt#nat as kt_nat,		 		 
+		 fa.facc_sld_out#nat as sld_v_nat		 
+	FROM dwh_reg.fact_accounts fa
+	JOIN s06.z#account a ON a.id = fa.facc_ref_account
+	JOIN s06.z#depart d ON d.id = a.c_depart
+						   AND substr(d.c_code, 1, 7) = '001-900'
+   WHERE fa.facc$source = 'S06'
+		 and fa.facc_opdate between '31.12.2020' and '04.01.2021'
+		 and fa.facc_acc_number = 'KZ45722S000000794529'
+		 )
+---------------------------------------------------------------------------------
+select s.facc_acc_number,
+	   i.facc_gk_num,
+	   i.facc_cur_short,
+	   d.facc_ref_acc_summary,
+	   s.sld_in               AS sld_s_in,
+	   d.sld_in               AS sld_d_in,
+	   i.sld_in               AS sld_i_in,
+	   s.dt                   AS dt_s,
+	   d.dt                   AS dt_d,
+	   i.dt                   AS dt_i,
+	   s.kt                   AS kt_s,
+	   d.kt                   AS kt_d,
+	   i.kt                   AS kt_i,
+	   s.sld_v                AS sld_s,
+	   d.sld_v                AS sld_d,
+	   i.sld_v                AS sld_i,
+	   s.sld_in_nat	                  AS sld_s_in_nat,
+	   d.sld_in_nat	                  AS sld_d_in_nat,
+	   i.sld_in_nat	                  AS sld_i_in_nat,
+	   s.dt_nat	                      AS dt_s_nat,
+	   d.dt_nat	                      AS dt_d_nat,
+	   i.dt_nat	                      AS dt_i_nat,
+	   s.kt_nat	                      AS kt_s_nat,
+	   d.kt_nat	                      AS kt_d_nat,
+	   i.kt_nat	                      AS kt_i_nat,
+	   s.sld_v_nat	                   AS sld_s_nat,
+	   d.sld_v_nat	                   AS sld_d_nat,
+	   i.sld_v_nat	                   AS sld_i_nat	
+  
+FROM acc_sum_p p
+JOIN acc_ibs i ON i.facc_acc_number = p.facc_acc_number
+	 and i.opdate = p.opdate 
+left join
+XMLTABLE('/ROWSET/ROW'  
+         PASSING   
+            xmltype.createxml(acc_sum(i.facc_acc_number,i.prev_date,i.beg_date,i.opdate))   
+         COLUMNS  
+            FACC_GK_NUM            varchar2(20)    PATH './FACC_GK_NUM',  
+            FACC_ACC_NUMBER        varchar2(20)    PATH './FACC_ACC_NUMBER',  
+            ID                     varchar2(20)    PATH './ID',
+			SLD_IN                 varchar2(20)    PATH './SLD_IN',  
+            SLD_IN_NAT             varchar2(20)    PATH './SLD_IN_NAT',
+			DT                     varchar2(20)    PATH './DT',  
+            KT                     varchar2(20)    PATH './KT',  
+            DT_NAT                 varchar2(20)    PATH './DT_NAT',
+			KT_NAT                 varchar2(20)    PATH './KT_NAT',
+			SLD_V                  varchar2(20)    PATH './SLD_V',
+			SLD_V_NAT              varchar2(20)    PATH './SLD_V_NAT'
+     ) s 
+on 1 = 1
+left join
+XMLTABLE('/ROWSET/ROW'  
+         PASSING   
+            xmltype.createxml(acc_detail(p.ID,i.prev_date,i.beg_date,i.opdate))   
+         COLUMNS  
+            FACC_REF_ACC_SUMMARY   varchar2(20)    PATH './FACC_REF_ACC_SUMMARY',  
+            SLD_IN                 varchar2(20)    PATH './SLD_IN',  
+            SLD_IN_NAT             varchar2(20)    PATH './SLD_IN_NAT',
+			DT                     varchar2(20)    PATH './DT',  
+            KT                     varchar2(20)    PATH './KT',  
+            DT_NAT                 varchar2(20)    PATH './DT_NAT',
+			KT_NAT                 varchar2(20)    PATH './KT_NAT',
+			SLD_V                  varchar2(20)    PATH './SLD_V',
+			SLD_V_NAT              varchar2(20)    PATH './SLD_V_NAT'
+     ) d 
+on 1 = 1
+ ORDER BY i.facc_gk_num,s.facc_acc_number,s.opdate

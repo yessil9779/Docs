@@ -1,0 +1,3 @@
+SELECT regexp_substr(str, '[^ ]+', 1, level) str
+  FROM (SELECT 'CHURCH OF ENGLAND 104' str FROM dual) t
+CONNECT BY instr(str, ' ', 1, level - 1) > 0

@@ -1,0 +1,29 @@
+select * from v$sql where to_char(first_load_time,'dd.mm.yyyy') = to_char(sysdate,'dd.mm.yyyy')
+
+
+select 
+  sql.sql_id               ,    
+  sql.executions_delta     ,
+  sql.buffer_gets_delta    ,
+  sql.disk_reads_delta     ,
+  sql.iowait_delta         ,
+  sql.apwait_delta         ,
+  sql.ccwait_delta         ,
+  sql.*
+
+from
+   dba_hist_sqlstat        sql,
+   dba_hist_snapshot         s
+where
+   s.snap_id = sql.snap_id
+   and sql.sql_id = '3usbcgmgmkd13'
+   and trunc(s.startup_time) = '14.12.2020'
+   order by s.startup_time
+---------------------------------------------------------------------------------------------
+select buffer_gets_delta as "Buffer gets"
+       ,buffer_gets_delta/nullif(executions_delta,0) as "Buffer gets/exec"
+       ,buffer_gets_delta/nullif(rows_processed_delta,0) as "Buffer gets/row"
+	   ,round(b.cpu_time_total/1000000)
+	   ,round(b.cpu_time_delta/1000000)
+	   ,b.*
+from dba_hist_sqlstat b where sql_id='4gtf58nh40tk5';

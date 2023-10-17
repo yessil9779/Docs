@@ -1,0 +1,21 @@
+select value,count(distinct client_id)
+from
+(
+    (
+        select * from Yessil_client 
+    )
+    unpivot
+    (
+        value
+        for value_type in
+            (num_1,num_2,num_3,num_4,num_5,num_6,num_7,num_8,num_9,num_10,num_11,num_12,num_13,num_14,num_15)
+    )
+)
+where value = 12
+group by value
+
+/////////////////////////////////////////////////////////
+
+select count(distinct client_id) from Yessil_client 
+where 12 in (num_1,num_2,num_3,num_4,num_5,num_6,num_7,num_8,num_9,num_10,num_11,num_12,num_13,num_14,num_15)
+     

@@ -1,0 +1,2 @@
+
+ALTER TABLE ds_datamarts.preagg_rb_card_aggregats  DROP IF EXISTS PARTITION(act_date = '2022-08-08'); 

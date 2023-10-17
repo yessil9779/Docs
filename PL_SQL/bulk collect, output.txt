@@ -1,0 +1,18 @@
+create or replace procedure TEST_P (c_count in number)
+is		   
+
+
+TYPE va IS TABLE OF z#ac_FIN%rowtype;
+varr va;
+ 
+begin 
+select * bulk collect into varr from z#ac_FIN where rownum<=c_count;
+
+FOR inn IN 1 .. varr.COUNT loop
+dbms_output.put_line(varr(inn).ID || ' / ' || varr(inn).C_MAIN_V_ID|| ' / ' || varr(inn).C_DATE_CLOSE);
+end loop;
+
+end;
+
+
+

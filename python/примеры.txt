@@ -5,8 +5,22 @@ b = a.encode('utf-8)  # Кодирование в басты
 c = b'world' # Байты
 d = c.decode('utf-8')  #Декодирование в текст
 ---------------------------------
-переменные среды
+Переменные среды
+
 import os
 path = os.environ['USER'] #get var
 os.environ['USER'] = 'Value' #set var
 ---------------------------------
+Работа с файлом
+#Чтение всего содержимого файла в строку 
+with open('filename.txt', 'rt') as file:
+data = file.read()
+#Чтение файла по строкам
+with open('filename.txt', 'rt') as file:
+for line in file:
+    ...
+#Запись в текстовый файл
+with open('out.txt', 'wt') as file:
+  file.write('Some output\n')
+  print('More output', file=file)
+

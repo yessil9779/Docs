@@ -24,3 +24,10 @@ with open('out.txt', 'wt') as file:
   file.write('Some output\n')
   print('More output', file=file)
 
+#Режимы открытия
+open('name.txt') #открывает для чтения 
+open('name.txt','rt') #открывает также для чтения 
+open('name.txt','wt') #открывает для записи
+open('name.bin','rb') #Чтение в двоичном режиме
+open('name.bin','wb') #Запись в двоичном режиме
+---------------------------------

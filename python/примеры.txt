@@ -4,3 +4,9 @@ a = 'hello'  # Текст
 b = a.encode('utf-8)  # Кодирование в басты
 c = b'world' # Байты
 d = c.decode('utf-8')  #Декодирование в текст
+---------------------------------
+переменные среды
+import os
+path = os.environ['USER'] #get var
+os.environ['USER'] = 'Value' #set var
+---------------------------------

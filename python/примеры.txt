@@ -11,3 +11,16 @@ import os
 path = os.environ['USER'] #get var
 os.environ['USER'] = 'Value' #set var
 ---------------------------------
+#Сравнение двух обЪектов
+def compare(a,b):
+  if a is b:
+    print('Same object')
+  if a == b:
+    print('Same value')
+  if type(a) is type(b)
+    print('Same type')
+---
+a = [1,2,3]
+b = [1,2,3]
+compare(a,b)
+

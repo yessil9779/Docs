@@ -1,3 +1,6 @@
+--trusted host
+pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org <package_name>
+---------------------------------
 lambda a, b: a + b        -- Lambda functions are anonymous functions (i.e., they do not have a name) that are created at runtime.
 ---------------------------------
 a = 'hello'  # Текст

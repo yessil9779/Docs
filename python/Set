@@ -1,0 +1,28 @@
+* Примечание. Элементы набора нельзя изменить, но вы можете удалять их и добавлять новые.
+* Примечание. Наборы неупорядочены, поэтому вы не можете быть уверены, в каком порядке будут появляться элементы.
+* После создания набора вы не можете изменять его элементы, но можете удалять элементы и добавлять новые.
+* Примечание. Значения True и 1считаются одними и теми же значениями в наборах и рассматриваются как дубликаты:
+  thisset = {"apple", "banana", "cherry", True, 1, 2}
+* Примечание. Значения False и 0считаются одними и теми же значениями в наборах и рассматриваются как дубликаты:
+  thisset = {"apple", "banana", "cherry", False, True, 0}
+--------------------------------------------------access items
+thisset = {"apple", "banana", "cherry"}
+for x in thisset:
+  print(x)
+-------
+thisset = {"apple", "banana", "cherry"}
+print("banana" in thisset)
+--------------------------------------------------ADD
+thisset = {"apple", "banana", "cherry"}
+thisset.add("orange")
+print(thisset)
+-------
+thisset = {"apple", "banana", "cherry"}
+tropical = {"pineapple", "mango", "papaya"}
+thisset.update(tropical)
+print(thisset)
+-------
+thisset = {"apple", "banana", "cherry"}
+mylist = ["kiwi", "orange"]
+thisset.update(mylist)
+print(thisset)

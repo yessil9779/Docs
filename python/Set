@@ -48,3 +48,8 @@ print(thisset)
 thisset = {"apple", "banana", "cherry"}
 del thisset
 print(thisset)
+--------------------------------------------------for
+thisset = {"apple", "banana", "cherry"}
+for x in thisset:
+  print(x)
+--------------------------------------------------

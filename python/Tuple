@@ -60,6 +60,12 @@ print(thistuple)
 # в Python нам также разрешено извлекать значения обратно в переменные. Это называется «распаковка»:
 fruits = ("apple", "banana", "cherry")
 (green, yellow, red) = fruits
-print(green)
-print(yellow)
-print(red)
+print(green,yellow,red)
+# Если количество переменных меньше количества значений, вы можете добавить *к имени переменной и значения будут присвоены переменной в виде списка:
+fruits = ("apple", "banana", "cherry", "strawberry", "raspberry")
+(green, yellow, *red) = fruits
+print(green,yellow,red)
+# Если звездочка добавлена ​​к другому имени переменной, отличному от последнего, Python будет присваивать значения переменной до тех пор, пока количество оставшихся значений не совпадет с количеством оставшихся переменных.
+fruits = ("apple", "mango", "papaya", "pineapple", "cherry")
+(green, *tropic, red) = fruits
+print(green,tropic,red)

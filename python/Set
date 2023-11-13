@@ -5,6 +5,7 @@
   thisset = {"apple", "banana", "cherry", True, 1, 2}
 * Примечание. Значения False и 0считаются одними и теми же значениями в наборах и рассматриваются как дубликаты:
   thisset = {"apple", "banana", "cherry", False, True, 0}
+* Note: If the item to remove does not exist, remove(), remove() will raise an error.
 --------------------------------------------------access items
 thisset = {"apple", "banana", "cherry"}
 for x in thisset:
@@ -25,4 +26,25 @@ print(thisset)
 thisset = {"apple", "banana", "cherry"}
 mylist = ["kiwi", "orange"]
 thisset.update(mylist)
+print(thisset)
+--------------------------------------------------remove
+thisset = {"apple", "banana", "cherry"}
+thisset.remove("banana")
+thisset.discard("banana")
+print(thisset)
+-------
+#Remove a random item by using the pop() method
+thisset = {"apple", "banana", "cherry"}
+x = thisset.pop()
+print(x)
+print(thisset)
+-------
+#The clear() method empties the set:
+thisset = {"apple", "banana", "cherry"}
+thisset.clear()
+print(thisset)
+-------
+#The del keyword will delete the set completely:
+thisset = {"apple", "banana", "cherry"}
+del thisset
 print(thisset)

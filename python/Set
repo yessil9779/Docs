@@ -5,7 +5,9 @@
   thisset = {"apple", "banana", "cherry", True, 1, 2}
 * Примечание. Значения False и 0считаются одними и теми же значениями в наборах и рассматриваются как дубликаты:
   thisset = {"apple", "banana", "cherry", False, True, 0}
-* Note: If the item to remove does not exist, remove(), remove() will raise an error.
+* Примечание. Если удаляемый элемент не существует, remove() возникнет ошибка.
+* Примечание. Если удаляемый элемент не существует, discard() НЕ приведет к возникновению ошибки.
+* Примечание. Оба варианта union()и update() исключают любые повторяющиеся элементы.
 --------------------------------------------------access items
 thisset = {"apple", "banana", "cherry"}
 for x in thisset:
@@ -33,23 +35,58 @@ thisset.remove("banana")
 thisset.discard("banana")
 print(thisset)
 -------
-#Remove a random item by using the pop() method
+#Удалите случайный элемент, используя pop() метод:
 thisset = {"apple", "banana", "cherry"}
 x = thisset.pop()
 print(x)
 print(thisset)
 -------
-#The clear() method empties the set:
+#Метод clear() очищает набор:
 thisset = {"apple", "banana", "cherry"}
 thisset.clear()
 print(thisset)
 -------
-#The del keyword will delete the set completely:
+#Ключевое delслово полностью удалит набор:
 thisset = {"apple", "banana", "cherry"}
 del thisset
 print(thisset)
---------------------------------------------------for
+--------------------------------------------------loop
 thisset = {"apple", "banana", "cherry"}
 for x in thisset:
   print(x)
---------------------------------------------------
+--------------------------------------------------join
+#Метод union()возвращает новый набор со всеми элементами из обоих наборов:
+set1 = {"a", "b" , "c"}
+set2 = {1, 2, 3}
+set3 = set1.union(set2)
+print(set3)
+-------
+#Метод update()вставляет элементы из набора 2 в набор 1:
+set1 = {"a", "b" , "c"}
+set2 = {1, 2, 3}
+set1.update(set2)
+print(set1)
+-------
+#Метод intersection_update()сохранит только те элементы, которые присутствуют в обоих наборах.
+x = {"apple", "banana", "cherry"}
+y = {"google", "microsoft", "apple"}
+x.intersection_update(y)
+print(x)
+-------
+#Метод intersection()вернет новый набор, содержащий только те элементы, которые присутствуют в обоих наборах.
+x = {"apple", "banana", "cherry"}
+y = {"google", "microsoft", "apple"}
+z = x.intersection(y)
+print(z)
+-------
+#Метод symmetric_difference_update()сохранит только те элементы, которые НЕ присутствуют в обоих наборах.
+x = {"apple", "banana", "cherry"}
+y = {"google", "microsoft", "apple"}
+x.symmetric_difference_update(y)
+print(x)
+-------
+#Метод symmetric_difference()вернет новый набор, содержащий только те элементы, которые НЕ присутствуют в обоих наборах.
+x = {"apple", "banana", "cherry"}
+y = {"google", "microsoft", "apple"}
+z = x.symmetric_difference(y)
+print(z)

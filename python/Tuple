@@ -56,7 +56,7 @@ thistuple = ("apple", "banana", "cherry")
 y = ("orange",)
 thistuple += y
 print(thistuple)
------------------------------------------------------------- unpacking
+------------------------------------------------------------ unpack
 # в Python нам также разрешено извлекать значения обратно в переменные. Это называется «распаковка»:
 fruits = ("apple", "banana", "cherry")
 (green, yellow, red) = fruits
@@ -69,3 +69,25 @@ print(green,yellow,red)
 fruits = ("apple", "mango", "papaya", "pineapple", "cherry")
 (green, *tropic, red) = fruits
 print(green,tropic,red)
+------------------------------------------------------------ loop
+thistuple = ("apple", "banana", "cherry")
+for x in thistuple:
+  print(x)
+-----------
+thistuple = ("apple", "banana", "cherry")
+for i in range(len(thistuple)):
+  print(thistuple[i])
+------------------------------------------------------------ join
+# Объедините два кортежа:
+tuple1 = ("a", "b" , "c")
+tuple2 = (1, 2, 3)
+tuple3 = tuple1 + tuple2
+print(tuple3)
+-----------
+# Умножение кортеж фруктов на 2:
+fruits = ("apple", "banana", "cherry")
+mytuple = fruits * 2
+print(mytuple)
+------------------------------------------------------------ all methods
+count()	-- Returns the number of times a specified value occurs in a tuple
+index()	-- Searches the tuple for a specified value and returns the position of where it was found

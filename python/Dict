@@ -47,3 +47,55 @@ thisdict.update({"year": 2020})
 ----------------------------------------------------------------add
 thisdict["color"] = "red"
 thisdict.update({"color": "red"})
+----------------------------------------------------------------del
+# Метод pop()удаляет элемент с указанным именем ключа:
+thisdict.pop("model")
+# Метод popitem()удаляет последний вставленный элемент (в версиях до 3.7 вместо него удаляется случайный элемент):
+thisdict.popitem()
+# Ключевое delслово удаляет элемент с указанным именем ключа:
+del thisdict["model"]
+# Ключевое слово delтакже может полностью удалить словарь:
+del thisdict
+Метод clear()очищает словарь:
+thisdict.clear()
+----------------------------------------------------------------loop
+# Выведите все имена ключей в словаре одно за другим:
+for x in thisdict:
+  print(x)
+# Выведите все значения в словаре одно за другим:
+for x in thisdict:
+  print(thisdict[x])
+# Прокрутите как ключи , так и значения , используя items()метод:
+for x, y in thisdict.items():
+  print(x, y)
+----------------------------------------------------------------copy
+# Сделайте копию словаря с помощью copy()метода:
+mydict = thisdict.copy()
+# Другой способ сделать копию — использовать встроенную функцию dict().
+mydict = dict(thisdict)
+----------------------------------------------------------------nested dict
+child1 = {
+  "name" : "Emil",
+  "year" : 2004
+}
+child2 = {
+  "name" : "Tobias",
+  "year" : 2007
+}
+myfamily = {
+  "child1" : child1,
+  "child2" : child2
+}
+print(myfamily["child2"]["name"])
+----------------------------------------------------------------all methods
+clear()	      - Removes all the elements from the dictionary
+copy()	      - Returns a copy of the dictionary
+fromkeys()	  - Returns a dictionary with the specified keys and value
+get()	        - Returns the value of the specified key
+items()	      - Returns a list containing a tuple for each key value pair
+keys()	      - Returns a list containing the dictionary's keys
+pop()	        - Removes the element with the specified key
+popitem()	    - Removes the last inserted key-value pair
+setdefault()	- Returns the value of the specified key. If the key does not exist: insert the key, with the specified value
+update()	    - Updates the dictionary with the specified key-value pairs
+values()	    - Returns a list of all the values in the dictionary

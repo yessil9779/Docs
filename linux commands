@@ -38,3 +38,7 @@ dpkg -i -- установить программу из файла .deb
 dpkg -r -- удалить программу
 ifconfig -- показать мой Ip адресс
 ping -- протестировать коннекш к адресу
+--------------------------------------------------------------------------------
+sudo docker exec -it --user root dfc1b5fce99a /bin/bash    -- войти в докер контейнер
+sudo docker cp dfc1b5fce99a:/var/lib/clickhouse/shadow/increment.txt /var/lib/clickhouse/shadow     -- копировать из контейнера а локальную папку
+

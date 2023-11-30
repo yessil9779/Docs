@@ -3,3 +3,6 @@ sudo docker start clickhouse-server-y
 sudo docker stop clickhouse-server
 sudo docker exec -it superset pip install clickhouse-connect
 sudo docker run -d -p 9779:8123 -p19000:9000 --name clickhouse-server-y --ulimit nofile=262144:262144 yandex/clickhouse-server
+
+sudo docker exec -it --user root dfc1b5fce99a /bin/bash    -- войти в докер контейнер
+sudo docker cp dfc1b5fce99a:/var/lib/clickhouse/shadow/increment.txt /var/lib/clickhouse/shadow     -- копировать из контейнера а локальную папку

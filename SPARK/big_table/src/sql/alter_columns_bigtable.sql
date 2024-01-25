@@ -1,0 +1,11 @@
+ALTER TABLE bigtable MODIFY COLUMN TLN_DATETIME DateTime('Europe/Moscow');
+ALTER TABLE bigtable MODIFY COLUMN TLN_LOGDATE DateTime('Europe/Moscow');
+ALTER TABLE bigtable MODIFY COLUMN TLN_DATETIME_END DateTime('Europe/Moscow');
+ALTER TABLE bigtable MODIFY COLUMN EPG_TLN_DATETIME_BEG DateTime('Europe/Moscow');
+ALTER TABLE bigtable MODIFY COLUMN EPG_TLN_DATETIME_END DateTime('Europe/Moscow');
+ALTER TABLE bigtable MODIFY COLUMN VER_UCCUPDATEDATETIME DateTime('Europe/Moscow');
+ALTER TABLE bigtable MODIFY COLUMN VER_OACUPDATEDATETIME DateTime('Europe/Moscow');
+ALTER TABLE bigtable MODIFY COLUMN VER_IWTUPDATEDATETIME DateTime('Europe/Moscow');
+ALTER TABLE bigtable MODIFY COLUMN TLN_UPDATEDATETIME DateTime('Europe/Moscow');
+ALTER TABLE bigtable MODIFY COLUMN epg_playlist_view_beg_datetime DateTime('Europe/Moscow');
+ALTER TABLE bigtable MODIFY COLUMN beeline_efir_view_efir_date DateTime('Europe/Moscow');

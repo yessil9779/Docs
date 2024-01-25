@@ -1,8 +1,8 @@
 import requests
 
-nifi_url = "https://nifi.erg.kz/nifi-api"
+nifi_url = "http://host:port/nifi-api"
 username = "yessil.adilzhanov"
-password = "1qaz2wsX"
+password = "password"
 
 #Get token
 def get_token() -> str:

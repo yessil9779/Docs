@@ -1,0 +1,1 @@
+cat /dev/null > /opt/nifi/scripts/esed/esed/src/logs/log.txt

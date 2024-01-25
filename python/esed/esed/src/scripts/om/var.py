@@ -1,0 +1,1 @@
+folder = r'/opt/nifi/scripts/esed/esed/src'
